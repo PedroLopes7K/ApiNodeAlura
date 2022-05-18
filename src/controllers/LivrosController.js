@@ -4,22 +4,28 @@ import livros from '../models/Livro.js'
 
 class LivroController {
   static listarLivros = (req, res) => {
-    livros.find((err, livros) => {
-      res.status(200).json(livros)
-    })
+    livros
+      .find()
+      .populate('autor')
+      .exec((err, livros) => {
+        res.status(200).json(livros)
+      })
   }
   static listarLivroID = (req, res) => {
     const id = req.params.id
 
-    livros.findById(id, (erro, livro) => {
-      if (erro) {
-        res
-          .status(400)
-          .send({ message: `${erro.message} - Livro não encontrado!` })
-      } else {
-        res.status(200).send(livro)
-      }
-    })
+    livros
+      .findById(id)
+      .populate('autor', 'nome')
+      .exec((erro, livro) => {
+        if (erro) {
+          res
+            .status(400)
+            .send({ message: `${erro.message} - Livro não encontrado!` })
+        } else {
+          res.status(200).send(livro)
+        }
+      })
   }
 
   static cadastrarLivro = (req, res) => {
